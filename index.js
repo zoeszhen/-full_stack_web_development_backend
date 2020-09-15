@@ -1,7 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3001;
+
+app.use(express.json())
+    .use(cors())
+    .use(express.static('build'));
 
 morgan.token('body', (req) => {
     const body = req.body;
@@ -43,7 +48,7 @@ const generateId = () => {
 
 app.get('/', (_, res) => {
     res.send(
-        '<h1>View Phonebook persons <a href="http://localhost:3001/api/persons">here</a></h1>'
+        `<h1>View Phonebook persons <a href="http://localhost:${PORT}/api/persons">here</a></h1>`
     );
 });
 
@@ -93,7 +98,6 @@ app.delete('/api/persons/:id', (req, res) => {
     res.status(204).end();
 });
 
-const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
