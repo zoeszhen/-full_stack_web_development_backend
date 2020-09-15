@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3001;
+const baseURL = process.env.baseURL || "http://localhost";
 
 app.use(express.json())
     .use(cors())
@@ -48,7 +49,7 @@ const generateId = () => {
 
 app.get('/', (_, res) => {
     res.send(
-        `<h1>View Phonebook persons <a href="http://localhost:${PORT}/api/persons">here</a></h1>`
+        `<h1>View Phonebook persons <a href="${baseURL}:${PORT}/api/persons">here</a></h1>`
     );
 });
 
