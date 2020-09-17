@@ -7,35 +7,9 @@ const Person = require('./models/person');
 const PORT = process.env.PORT || 3001;
 const baseURL = process.env.baseURL || "http://localhost";
 
+app.use(express.static('build'))
 app.use(express.json())
-    .use(express.static('build'))
-    .use(cors())
-
-// handler of requests with unknown endpoint
-const unknownEndpoint = (req, res) => {
-    res.status(404).send({ error: 'unknown endpoint' });
-};
-app.use(unknownEndpoint)
-
-const errorHandler = (error, req, res, next) => {
-    console.error(error.message);
-
-    if (error.name === 'CastError') {
-        return res.status(400).send({ error: 'malformatted id' });
-    }
-
-    if (
-        Object.entries(error.errors).some(([key, value]) => value.kind === 'unique')
-    ) {
-        return res.status(409).json({ error: error.message });
-    } else if (error.name === 'ValidationError') {
-        return res.status(400).json({ error: error.message });
-    }
-
-    next(error);
-};
-app.use(errorHandler)
-
+app.use(cors())
 
 morgan.token('body', (req) => {
     const body = req.body;
@@ -125,6 +99,31 @@ app.delete('/api/persons/:id', (req, res, next) => {
         .catch((error) => next(error));
 });
 
+// handler of requests with unknown endpoint
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, req, res, next) => {
+    console.error(error.message);
+
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' });
+    }
+
+    if (
+        Object.entries(error.errors).some(([key, value]) => value.kind === 'unique')
+    ) {
+        return res.status(409).json({ error: error.message });
+    } else if (error.name === 'ValidationError') {
+        return res.status(400).json({ error: error.message });
+    }
+
+    next(error);
+};
+app.use(errorHandler)
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
