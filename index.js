@@ -7,6 +7,16 @@ const Person = require('./models/person');
 const PORT = process.env.PORT || 3001;
 const baseURL = process.env.baseURL || "http://localhost";
 
+app.use(express.json())
+    .use(express.static('build'))
+    .use(cors())
+    .use(unknownEndpoint)
+    .use(errorHandler)
+    .listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+
+
 const errorHandler = (error, req, res, next) => {
     console.error(error.message);
 
@@ -116,12 +126,3 @@ app.delete('/api/persons/:id', (req, res, next) => {
         .then(() => res.status(204).end())
         .catch((error) => next(error));
 });
-
-app.use(express.json())
-    .use(cors())
-    .use(express.static('build'))
-    .use(unknownEndpoint)
-    .use(errorHandler)
-    .listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
