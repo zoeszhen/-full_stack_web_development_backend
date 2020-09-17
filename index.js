@@ -10,12 +10,12 @@ const baseURL = process.env.baseURL || "http://localhost";
 app.use(express.json())
     .use(express.static('build'))
     .use(cors())
-    .use(unknownEndpoint)
-    .use(errorHandler)
-    .listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
 
+// handler of requests with unknown endpoint
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({ error: 'unknown endpoint' });
+};
+app.use(unknownEndpoint)
 
 const errorHandler = (error, req, res, next) => {
     console.error(error.message);
@@ -34,10 +34,8 @@ const errorHandler = (error, req, res, next) => {
 
     next(error);
 };
-// handler of requests with unknown endpoint
-const unknownEndpoint = (req, res) => {
-    res.status(404).send({ error: 'unknown endpoint' });
-};
+app.use(errorHandler)
+
 
 morgan.token('body', (req) => {
     const body = req.body;
@@ -125,4 +123,8 @@ app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndRemove(req.params.id)
         .then(() => res.status(204).end())
         .catch((error) => next(error));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
