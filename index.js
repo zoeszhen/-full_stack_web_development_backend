@@ -100,7 +100,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 });
 
 // handler of requests with unknown endpoint
-const unknownEndpoint = (req, res) => {
+const unknownEndpoint = (_, res) => {
     res.status(404).send({ error: 'unknown endpoint' });
 };
 
